@@ -51,18 +51,48 @@ const projects = [
   },
 ]
 
+import { useState } from 'react'
+
+// ...keep the existing `projects` array as-is above this...
+
+const filters = ['All', 'DevOps', 'Full-Stack', 'Game']
+
 function Projects() {
+  const [activeFilter, setActiveFilter] = useState('All')
+
+  const filtered = activeFilter === 'All'
+    ? projects
+    : projects.filter((p) => p.category.toLowerCase() === activeFilter.toLowerCase())
+
   return (
-    <section className="px-6 py-16">
-      <h2 className="text-3xl font-bold mb-2">Projects.</h2>
-      <p className="text-gray-500 mb-10">Real work across DevOps, full-stack, and game development.</p>
+    <section className="px-6 py-16 max-w-6xl mx-auto">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
+        <div>
+          <h2 className="text-3xl font-bold mb-2">Projects.</h2>
+          <p className="text-gray-500">Real work across DevOps, full-stack, and game development.</p>
+        </div>
+        <div className="flex gap-2">
+          {filters.map((f) => (
+            <button
+              key={f}
+              onClick={() => setActiveFilter(f)}
+              className={`px-3 py-1.5 text-xs rounded-md border ${
+                activeFilter === f
+                  ? 'bg-green-500 text-black border-green-500'
+                  : 'border-gray-300 dark:border-gray-700 text-gray-500'
+              }`}
+            >
+              {f.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {projects.map((p, i) => (
+        {filtered.map((p, i) => (
           <div
             key={i}
-            className="border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:shadow-lg transition-shadow"
-          >
+            className="border border-gray-200 dark:border-gray-800 rounded-xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-green-500/50 cursor-pointer"          >
             <div className="flex justify-between items-start mb-3">
               <span className="text-xs text-green-500 font-mono uppercase">{p.category}</span>
             </div>
@@ -78,15 +108,24 @@ function Projects() {
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {p.tags.map((t, k) => (
-                <span key={k} className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md">
-                  {t}
-                </span>
-              ))}
+            <div className="bg-black rounded-lg overflow-hidden mb-4 mt-4">
+              <div className="flex items-center gap-1.5 px-3 py-2 border-b border-gray-800">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                <span className="text-[10px] text-gray-500 ml-2 font-mono">{p.title.toLowerCase().replace(/\s+/g, '-')}.spec</span>
+              </div>
+              <div className="px-3 py-2 font-mono text-xs text-green-400 space-y-1">
+                <div className="text-gray-500">// Project metadata</div>
+                {p.tags.map((t, k) => (
+                  <div key={k}>
+                    <span className="text-gray-500">$</span> stack.add(<span className="text-blue-400">"{t}"</span>)
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <a href="#" className="inline-block mt-4 text-sm text-green-500 font-medium">
+            <a href="#" className="inline-block text-sm text-green-500 font-medium transition-transform hover:translate-x-1">
               View project →
             </a>
           </div>
